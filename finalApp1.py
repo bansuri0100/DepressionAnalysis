@@ -2,24 +2,14 @@ from flask import Flask, redirect, render_template, request, url_for, session
 import time
 import re
 
-import pandas as pd
-import numpy as np
-import spacy
-nlp=spacy.load('en_core_web_sm')
-import nltk
-from sklearn.model_selection import train_test_split
+
 
 app = Flask(__name__)
 app.secret_key = "secret"
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-	try:
-		inp = session["inp"]
-		count = session["count"]
-	except KeyError:
-		count = session["count"] = 0
-		inp = session["inp"] = ""
+	
 		if request.method == "GET":
 			return render_template("index.html")
 
@@ -30,6 +20,12 @@ def index():
 				return render_template("index.html",msg=msg)
         
 			else:
+				import pandas as pd
+				import numpy as np
+				import spacy
+				nlp=spacy.load('en_core_web_sm')
+				import nltk
+				from sklearn.model_selection import train_test_split
 				inp = request.form['data']
 				
 
@@ -59,18 +55,8 @@ def index():
 # In[5]:
 
 
-				def process(str):
-					corpus=[]
-					sentence=re.sub('[^a-zA-Z]', ' ',str)
-					sentence=sentence.lower()
-					sentence=sentence.split()
-   
-					sentence=[s for s in sentence if not nlp.vocab[s].is_stop]
-					sentence=' '.join(sentence)
-					sent=nlp(sentence)   
-					sent2=[s.lemma_ for s in sent ]
-					sentence2=' '.join(sent2)
-					return(sentence2)
+				
+					
 
 
 # In[20]:
@@ -78,24 +64,28 @@ def index():
 
 
     
-				inp=process(inp)   
+				
+				corpus=[]
+				sentence=re.sub('[^a-zA-Z]', ' ',inp)
+				sentence=sentence.lower()
+				sentence=sentence.split()
+   
+				sentence=[s for s in sentence if not nlp.vocab[s].is_stop]
+				sentence=' '.join(sentence)
+				sent=nlp(sentence)   
+				sent2=[s.lemma_ for s in sent ]
+				sentence2=' '.join(sent2)
+				inp=sentence2   
 				z=pd.Series(inp)
 				predictions = text_clf.predict(z)
-				predictions
-				inp=predictions[0]
+				
+				out=predictions[0]
 				
 				session["inp"]=inp
 				session["count"]=session["count"]+1
-				return render_template("index.html",msg=inp)
+				return render_template("index.html",msg=out)
 
-	return render_template("index.html")
-
-
-
-
-
-
-
+	
 
 if __name__ == '__main__':
     app.run(debug=True)
