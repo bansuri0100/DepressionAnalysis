@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D A A</title>
+</head>
+<body>
+        <h1>Depression and Anxiety Analysis</h1>
+        <h3>{{msg}}</h3>
+
+                <form action="{{ url_for('index') }}" method="POST">
+                    Your Text : <textarea name="data" id="res" rows="25" cols="25" required></textarea>
+                    <input type="submit" value="submit"/>
+                </form>
+                
+               <button onclick="start()">Start</button> 
+        
+
+
+
+  <script>
+    function start(button){
+    document.getElementById('res').innerHTML = '';
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    let finalTranscript = '';
+    let recognition = new window.SpeechRecognition();
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 10;
+    recognition.continuous = false;
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+        let transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      document.getElementById('res').innerHTML = finalTranscript + interimTranscript;
+    }
+    recognition.start();
+    return true;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
