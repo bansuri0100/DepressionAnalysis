@@ -100,7 +100,7 @@ def index():
 						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Stay Happy !!")
 					elif(avg>0.2 and avg<=0.35):
 						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Carry on the smile ")	
-					elif (avg>35 and avg<=0.45):
+					elif (avg>0.35 and avg<=0.45):
 						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="So good to see that you are very happy !")	
 					elif (avg>0.45):
 						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Overwhelming !")
