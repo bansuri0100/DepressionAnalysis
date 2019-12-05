@@ -13,8 +13,10 @@ def index():
 		list=[]
 		try:
 			list=session["list"]
+			five=session["five"]
 		except:
-			session["list"]=list=[]	
+			session["list"]=list=[]
+			session["five"]=five=5	
 		if request.method == "GET":
 			return render_template("index.html")
 
@@ -22,7 +24,7 @@ def index():
 			inp = request.form['data']
 			if inp == '':
 				msg='Sorry..could u please repeat!!!!'
-				return render_template("index.html",msg=msg,score="",advise="")
+				return render_template("index.html",msg=msg,score="",advise="",five="Please submit 5 more sentences for score and advise")
         
 			else:
 				import pandas as pd
@@ -90,7 +92,8 @@ def index():
 				inp=sentence2   
 				z=pd.Series(inp)
 				predictions = text_clf.predict(z)
-				
+				five-=1
+				session["five"]=five
 				out=predictions[0]
 				
 				if len(session["list"])==5:
@@ -114,8 +117,10 @@ def index():
 					elif(avg<-0.45):	
 						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Immediately consult a psychologist !")
 					
+				elif(session["five"]==1):	
+					return render_template("index.html",msg=out,score="",advise="",five="Please submit "+str(session["five"])+ " more sentence for score and advise")
 				else:	
-					return render_template("index.html",msg=out,score="",advise="")
+					return render_template("index.html",msg=out,score="",advise="",five="Please submit "+str(session["five"])+ " more sentences for score and advise")	
 
 @app.route("/newlog",methods=["GET","POST"])
 def newlog():
