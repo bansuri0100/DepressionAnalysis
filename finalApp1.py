@@ -10,14 +10,19 @@ app.secret_key = "secret"
 @app.route("/", methods=['GET', 'POST'])
 def index():
 	
+		list=[]
+		try:
+			list=session["list"]
+		except:
+			session["list"]=list=[]	
 		if request.method == "GET":
 			return render_template("index.html")
 
 		if request.method == 'POST':
 			inp = request.form['data']
 			if inp == '':
-				msg='sorry..could u please repeat!!!!'
-				return render_template("index.html",msg=msg)
+				msg='Sorry..could u please repeat!!!!'
+				return render_template("index.html",msg=msg,score="",advise="")
         
 			else:
 				import pandas as pd
@@ -64,7 +69,14 @@ def index():
 
 
     
-				
+				import nltk
+				nltk.download('vader_lexicon')
+				from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+				sid = SentimentIntensityAnalyzer()
+				scores=sid.polarity_scores(inp)
+				list.append(scores['compound'])
+				session["list"]=list
 				corpus=[]
 				sentence=re.sub('[^a-zA-Z]', ' ',inp)
 				sentence=sentence.lower()
@@ -81,9 +93,34 @@ def index():
 				
 				out=predictions[0]
 				
-				return render_template("index.html",msg=out)
+				if len(session["list"])==5:
+					avg=sum(list)/5
+					session["list"]=[]
+					if(avg>=0 and avg<=0.2):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Stay Happy !!")
+					elif(avg>0.2 and avg<=0.35):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Carry on the smile ")	
+					elif (avg>35 and avg<=0.45):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="So good to see that you are very happy !")	
+					elif (avg>0.45):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Overwhelming !")
+					elif(avg<0 and avg>=-0.2):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="You are sad ")					
+					elif(avg<-0.2 and avg>=-0.35):
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Nothing to worry about much . Stay happy !!")
 
-	
+					elif(avg<-0.35 and avg>=-0.45):	
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Take Care of yout health. Be calm and enjoy each and every bit of life.Visit a psychologist")
+					elif(avg<-0.45):	
+						return render_template("index.html",msg=out,score="Compound Score :"+str(avg),advise="Immediately consult a psychologist !")
+					
+				else:	
+					return render_template("index.html",msg=out,score="",advise="")
+
+@app.route("/newlog",methods=["GET","POST"])
+def newlog():
+	session.clear()
+	return redirect(url_for("index"))	
 
 if __name__ == '__main__':
     app.run(debug=True)
