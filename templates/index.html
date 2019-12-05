@@ -7,7 +7,9 @@
 </head>
 <body>
         <h1>Depression and Anxiety Analysis</h1>
-        <h3>{{msg}}</h3>
+        <h3>Detection :{{msg}}</h3>
+        <h3>Compound Score :{{score}}</h3>
+        <h3>{{advise}}</h3>
 
                 <form action="{{ url_for('index') }}" method="POST">
                     Your Text : <textarea name="data" id="res" rows="25" cols="25" required></textarea>
