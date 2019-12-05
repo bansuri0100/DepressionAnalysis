@@ -81,8 +81,6 @@ def index():
 				
 				out=predictions[0]
 				
-				session["inp"]=inp
-				session["count"]=session["count"]+1
 				return render_template("index.html",msg=out)
 
 	
