@@ -1,5 +1,5 @@
 # DepressionAnalysis
-Detecting Depression using Natural Language Processing(NLP)
+Detecting Depression using Natural Language Processing(NLP) and Machine Learning(ML) approach.
 
 Some screenshots of the Web App.
 
